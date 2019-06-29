@@ -17,9 +17,10 @@ class BaseDecorator(
         when (childPosition % 2) {
             0 -> {
                 outRect.bottom = defaultPadding
+                outRect.right = defaultPadding / 2
             }
             1 -> {
-                outRect.left = defaultPadding
+                outRect.left = defaultPadding / 2
                 outRect.bottom = defaultPadding
             }
         }

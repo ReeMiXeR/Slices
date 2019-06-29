@@ -1,14 +1,11 @@
 package vs.game.slices.viewmodel.game
 
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import vs.game.slices.exceptions.NotEnoughDataException
+import vs.game.slices.model.*
 import vs.game.slices.viewmodel.repository.GameRepository
 import vs.game.slices.viewmodel.utils.SingleLiveEvent
-import vs.game.slices.model.GameItem
-import vs.game.slices.model.GameResultItem
-import vs.game.slices.model.GameResultParams
-import vs.game.slices.model.SerialName
+import vs.game.slices.viewmodel.utils.schedulersIoToMain
 
 class GameViewModelImpl(private val repository: GameRepository) : GameViewModel() {
 
@@ -20,51 +17,10 @@ class GameViewModelImpl(private val repository: GameRepository) : GameViewModel(
 
     private var position: Int = 0
     private val answers: MutableList<String> = mutableListOf()
+    private var isRedirected = false
 
     init {
-        safeSubscribe {
-            repository.getGameData()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { game ->
-                        // todo сделать маппинг на бэккграунде
-                        if (game.items.size > 1) {
-                            val serialNames = game.items.map { it.name }
-
-                            title = game.title
-                            data = game.items.map {
-                                val correctSerialName = it.name
-                                val wrongNames = serialNames
-                                    .filter { serialName ->
-                                        serialName.equals(correctSerialName, false).not()
-                                    }
-
-                                it.items.map { character ->
-                                    GameItem(
-                                        character = character,
-                                        serialName = SerialName(
-                                            correctName = correctSerialName,
-                                            wrongName = wrongNames.random()
-                                        )
-                                    )
-                                }
-                            }.flatten().shuffled()
-
-                            produceContent()
-                        } else {
-                            state.postValue(
-                                GameState.Stub("Недостаточно данных для начала игры")
-                            )
-                        }
-                    },
-                    {
-                        state.postValue(
-                            GameState.Stub("Упс, что-то опшло не так")
-                        )
-                    })
-
-        }
+        initData()
     }
 
     override fun onAnswerClicked(answer: String) {
@@ -73,9 +29,55 @@ class GameViewModelImpl(private val repository: GameRepository) : GameViewModel(
 
         if (position < data.size) {
             produceContent()
-        } else {
+        } else if (isRedirected.not()) {
             produceSwitchEvent()
         }
+    }
+
+    private fun initData() {
+        safeSubscribe {
+            repository.getGameData()
+                .map { game ->
+                    if (game.items.size <= 1) throw NotEnoughDataException()
+                    else game.items.toGameList() to game.title
+                }
+                .schedulersIoToMain()
+                .doAfterSuccess { produceContent() }
+                .subscribe(
+                    { (data, title) ->
+                        this.data = data
+                        this.title = title
+                    },
+                    {
+                        state.value = when (it) {
+                            is NotEnoughDataException -> GameState.Stub("Недостаточно данных для начала игры")
+                            else -> GameState.Stub("Упс, что-то опшло не так")
+                        }
+                    })
+
+        }
+    }
+
+    private fun List<SerialItem>.toGameList(): List<GameItem> {
+        val serialNames = map { it.name }
+
+        return map {
+            val correctSerialName = it.name
+            val wrongNames = serialNames
+                .filter { serialName ->
+                    serialName.equals(correctSerialName, false).not()
+                }
+
+            it.items.map { character ->
+                GameItem(
+                    character = character,
+                    serialName = SerialName(
+                        correctName = correctSerialName,
+                        wrongName = wrongNames.random()
+                    )
+                )
+            }
+        }.flatten().shuffled()
     }
 
     private fun produceContent() {
@@ -92,6 +94,7 @@ class GameViewModelImpl(private val repository: GameRepository) : GameViewModel(
     }
 
     private fun produceSwitchEvent() {
+        isRedirected = true
         var correctAnswers = 0
 
         val gameResult = data.mapIndexed { index, gameItem ->

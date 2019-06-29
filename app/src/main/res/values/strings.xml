@@ -2,4 +2,6 @@
     <string name="app_name">Slices</string>
     <string name="game_result_correct">Верно</string>
     <string name="game_result_wrong">Неверно</string>
+    <string name="game_result_button_text">Попробовать ещё раз</string>
+    <string name="game_result_title_text">Ваш результат</string>
 </resources>

@@ -1,5 +1,9 @@
 package vs.game.slices.viewmodel.utils
 
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+
 val <T> T.exhaustive: T
     get() = this
 
@@ -14,4 +18,8 @@ fun singleClick(delay: Long = TouchLocker.TOUCH_FREEZE_TIME, touchEvent: () -> U
 
     TouchLocker.lastTouchTime = currentTime
     touchEvent.invoke()
+}
+
+fun <T> Single<T>.schedulersIoToMain(): Single<T> {
+    return subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 }

@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.AlignItems
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import kotlinx.android.synthetic.main.activity_game_result.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -37,6 +40,7 @@ class GameResultActivity : AppCompatActivity() {
 
     private val params by lazy { intent.getSerializableExtra(KEY_PARAMS) as GameResultParams }
     private val viewModel: GameResultViewModel by viewModel { parametersOf(params) }
+    private val adapter by lazy { GameResultAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +68,7 @@ class GameResultActivity : AppCompatActivity() {
         viewModel.state.observe(this, Observer {
             when (it) {
                 is GameResultState.Content -> {
-                    game_result_recycler.adapter = GameResultAdapter(it.data)
+                    adapter.set(it.data)
                     game_result_title_description.text = it.title
                     game_result_score.text = it.score
                 }
@@ -78,7 +82,11 @@ class GameResultActivity : AppCompatActivity() {
                 viewModel.onNewGameClicked()
             }
         }
-        game_result_recycler.layoutManager = GridLayoutManager(this, 2, RecyclerView.VERTICAL, false)
+        game_result_recycler.adapter = this.adapter
+        game_result_recycler.layoutManager = FlexboxLayoutManager(this).apply {
+            alignItems = AlignItems.BASELINE
+            justifyContent = JustifyContent.CENTER
+        }
         game_result_recycler.addItemDecoration(BaseDecorator(8.dp(this), 80.dp(this)))
 
 //        game_result_recycler.recycledViewPool.setMaxRecycledViews()

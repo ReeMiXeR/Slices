@@ -12,7 +12,7 @@
             android:id="@+id/game_result_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ваш результат"
+            android:text="@string/game_result_title_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -86,8 +86,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:backgroundTint="@color/white"
             android:textColor="@color/black"
+            android:textSize="16sp"
             android:layout_height="wrap_content"
-            android:text="Попробовать еще раз"
+            android:letterSpacing="0.0"
+            android:text="@string/game_result_button_text"
             android:textAllCaps="false"
             android:layout_marginBottom="16dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
