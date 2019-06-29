@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Slices</string>
+    <string name="game_result_correct">Верно</string>
+    <string name="game_result_wrong">Неверно</string>
+</resources>

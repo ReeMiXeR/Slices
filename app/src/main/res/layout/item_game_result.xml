@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/game_result_container"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:orientation="vertical"
+        android:gravity="bottom|center_horizontal"
+        android:background="@color/black">
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/game_result_correctness"
+            android:layout_width="wrap_content"
+            tools:text="Неверно"
+            android:layout_marginBottom="16dp"
+            android:textSize="16sp"
+            android:background="@drawable/oval"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/game_result_character_name"
+            android:layout_width="wrap_content"
+            tools:text="Джон Сноу"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/item_game_result_wrong_answer"
+            android:layout_width="wrap_content"
+            tools:text="Игра престолов"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/item_game_result_correct_answer"
+            android:layout_width="wrap_content"
+            tools:text="Властелин колец"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_marginBottom="16dp"
+            android:layout_height="wrap_content"/>
+
+</LinearLayout>
