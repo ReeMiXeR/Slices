@@ -5,6 +5,7 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import vs.game.slices.R
 import vs.game.slices.model.GameResultItem
 import vs.game.slices.view.activity.GameActivity
@@ -23,9 +24,13 @@ class GameResultAdapter(items: List<GameResultItem>) : ConstantAdapter<GameResul
     override fun bind(holder: GameResultViewHolder, item: GameResultItem, position: Int) {
         val context = holder.itemView.context
         with(item) {
-            holder.wrongAnswer.toggleGone(item.isCorrect)
+            holder.wrongAnswer.toggleGone(item.isCorrect.not())
 
-            if (item.isCorrect.not()) holder.wrongAnswer.text = this.item.serialName.wrongName
+            if (item.isCorrect) {
+
+            } else {
+                holder.wrongAnswer.text = this.item.serialName.wrongName
+            }
 
             holder.characterName.text = item.item.character.name
             holder.correctAnswer.text = item.item.serialName.correctName
@@ -35,7 +40,9 @@ class GameResultAdapter(items: List<GameResultItem>) : ConstantAdapter<GameResul
             Glide.with(context)
                 .load(Uri.parse(GameActivity.ASSET_PATH.format(this.item.character.imageName)))
                 .transform(CenterCrop(), RoundedCorners(16.dp(context)))
-                .into(ViewGroupTarget(holder.container))
+                .placeholder(R.drawable.placeholder)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(holder.background)
         }
     }
 }

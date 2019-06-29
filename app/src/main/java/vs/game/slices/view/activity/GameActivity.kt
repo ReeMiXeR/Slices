@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import kotlinx.android.synthetic.main.activity_game.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -94,7 +95,9 @@ class GameActivity : AppCompatActivity() {
             Glide.with(this@GameActivity)
                 .load(Uri.parse(ASSET_PATH.format(imageName)))
                 .transform(CenterCrop(), RoundedCorners(16.dp(this@GameActivity)))
-                .into(ViewGroupTarget(main_character_card))
+                .placeholder(R.drawable.placeholder)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(main_character_card_image)
         }
 
         val (leftButtonText, rightButtonText) = item.serialName.getShuffled()

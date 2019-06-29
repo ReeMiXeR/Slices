@@ -45,16 +45,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_height="450dp"
             android:layout_margin="16dp"
-            tools:background="@color/black"
             app:layout_constraintTop_toBottomOf="@id/main_title_description">
-<!--            app:cardCornerRadius="16dp"-->
-<!--            app:cardElevation="4dp"-->
-<!--            app:cardBackgroundColor="@color/gray"-->
+        <!--            app:cardCornerRadius="16dp"-->
+        <!--            app:cardElevation="4dp"-->
+        <!--            app:cardBackgroundColor="@color/gray"-->
 
-<!--        todo заморочится и грузить сразу в background cardview-->
+        <!--        todo заморочится и грузить сразу в background cardview-->
         <ImageView
                 android:id="@+id/main_character_card_image"
                 android:layout_width="match_parent"
+                tools:background="@color/black"
                 android:layout_height="match_parent"/>
 
         <androidx.appcompat.widget.AppCompatTextView
