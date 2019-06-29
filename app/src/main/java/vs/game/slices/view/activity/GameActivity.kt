@@ -2,25 +2,23 @@ package vs.game.slices.view.activity
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_game.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import vs.game.slices.R
 import vs.game.slices.model.GameItem
 import vs.game.slices.model.getShuffled
-import vs.game.slices.view.dp
-import vs.game.slices.view.view.ViewGroupTarget
+import vs.game.slices.view.SwipeBehavior
+import vs.game.slices.view.setGone
+import vs.game.slices.view.view.SliceView
 import vs.game.slices.viewmodel.game.GameEvent
 import vs.game.slices.viewmodel.game.GameState
 import vs.game.slices.viewmodel.game.GameViewModel
@@ -70,8 +68,14 @@ class GameActivity : AppCompatActivity() {
         viewModel.state.observe(this, Observer {
             when (it) {
                 is GameState.Content -> {
+                    clearFindViewByIdCache()
                     main_title_description.text = it.title
-                    bindCard(it.currentItem)
+                    bindSlice(it.currentItem)
+                    it.nextItem?.let {
+                        slice_card_second.bind(it.character.name, it.character.imageName)
+                    } ?: run {
+                        slice_card_second.setGone()
+                    }
                 }
 
                 is GameState.Stub -> {
@@ -85,16 +89,22 @@ class GameActivity : AppCompatActivity() {
         })
     }
 
-    private fun bindCard(item: GameItem) {
+    private fun bindSlice(item: GameItem) {
         with(item.character) {
-            main_item_title.text = name
+            slice_card_first.bind(name, imageName)
+        }
 
-            Glide.with(this@GameActivity)
-                .load(Uri.parse(ASSET_PATH.format(imageName)))
-                .transform(CenterCrop(), RoundedCorners(16.dp(this@GameActivity)))
-                .placeholder(R.drawable.placeholder)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(main_character_card_image)
+        SwipeBehavior.from(slice_card_first).callback = {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                slice_card_first.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
+            }
+
+            swap(slice_card_first, slice_card_second)
+
+            when (it) {
+                SwipeBehavior.SwipeDirection.START -> main_buttom_left.performClick()
+                SwipeBehavior.SwipeDirection.END -> main_buttom_right.performClick()
+            }.exhaustive
         }
 
         val (leftButtonText, rightButtonText) = item.serialName.getShuffled()
@@ -105,6 +115,9 @@ class GameActivity : AppCompatActivity() {
         val clickListener = View.OnClickListener {
             singleClick {
                 (it as? TextView)?.let { castedView ->
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        it.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
+                    }
                     viewModel.onAnswerClicked(castedView.text.toString())
                 } ?: throw IllegalStateException("Incorrect view type, use TextView instead")
             }
@@ -112,5 +125,18 @@ class GameActivity : AppCompatActivity() {
 
         main_buttom_right.setOnClickListener(clickListener)
         main_buttom_left.setOnClickListener(clickListener)
+    }
+
+    private fun swap(view1: SliceView, view2: SliceView) {
+        val elevation1 = view1.elevation
+        val elevation2 = view2.elevation
+        val id1 = view1.id
+        val id2 = view2.id
+
+        view1.id = id2
+        view1.elevation = elevation2
+
+        view2.id = id1
+        view2.elevation = elevation1
     }
 }
