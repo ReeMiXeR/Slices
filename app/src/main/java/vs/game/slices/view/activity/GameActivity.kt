@@ -87,10 +87,6 @@ class GameActivity : AppCompatActivity() {
                     game_container.showStub()
                     game_stub.text = getString(it.error)
                 }
-
-                is GameState.Loading -> {
-                    game_container.showLoading()
-                }
             }.exhaustive
         })
     }

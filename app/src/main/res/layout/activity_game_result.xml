@@ -1,90 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/game_result_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".view.activity.GameResultActivity">
-
-    <LinearLayout
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/game_result_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        tools:context=".view.activity.GameResultActivity">
 
-        <TextView
-            android:id="@+id/game_result_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:paddingTop="16dp"
-            android:background="@color/gray_three"
-            android:stateListAnimator="@animator/animator_elevation"
-            android:gravity="center"
-            android:text="@string/game_result_title_text"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/game_result_title_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="3"
-            android:background="@color/gray_three"
-            android:stateListAnimator="@animator/animator_elevation"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            tools:text="Разделите героев" />
-
-        <TextView
-            android:id="@+id/game_result_score"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:elevation="8dp"
-            android:maxLines="3"
-            android:background="@color/gray_three"
-            android:stateListAnimator="@animator/animator_elevation"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="@color/light_blue"
-            android:textSize="24sp"
-            tools:text="2 / 10" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/game_result_recycler"
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:overScrollMode="never"
-            tools:listitem="@layout/item_game_result" />
+            android:orientation="vertical">
+
+        <TextView
+                android:id="@+id/game_result_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingTop="16dp"
+                android:textAllCaps="true"
+                android:textAppearance="@style/R16"
+                android:background="@color/gray_three"
+                android:textColor="@color/gray_four"
+                android:stateListAnimator="@animator/animator_elevation"
+                android:gravity="center"
+                android:text="@string/game_result_title_text"
+                android:textSize="16sp"/>
+
+        <TextView
+                android:id="@+id/game_result_title_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:textAppearance="@style/R26"
+                android:maxLines="2"
+                android:background="@color/gray_three"
+                android:stateListAnimator="@animator/animator_elevation"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/black"
+                tools:text="Разделите героев"/>
+
+        <TextView
+                android:id="@+id/game_result_score"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/R24"
+                android:paddingTop="8dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:elevation="8dp"
+                android:textStyle="bold"
+                android:maxLines="3"
+                android:background="@color/gray_three"
+                android:stateListAnimator="@animator/animator_elevation"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/light_blue"
+                tools:text="2 / 10"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/game_result_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                tools:listitem="@layout/item_game_result"/>
 
     </LinearLayout>
 
     <View
-        android:id="@+id/game_result_gradient"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:background="@drawable/white_gradient" />
+            android:id="@+id/game_result_gradient"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@drawable/white_gradient"/>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/game_result_button"
-        style="@style/Widget.MaterialComponents.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/white"
-        android:letterSpacing="0.0"
-        android:text="@string/game_result_button_text"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:cornerRadius="12dp" />
+            android:id="@+id/game_result_button"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/white"
+            android:letterSpacing="0.0"
+            android:text="@string/game_result_button_text"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:cornerRadius="12dp"/>
 </FrameLayout>

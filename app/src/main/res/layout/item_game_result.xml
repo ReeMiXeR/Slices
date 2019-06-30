@@ -35,46 +35,49 @@
                 android:paddingEnd="12dp"
                 android:paddingBottom="8dp"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textAppearance="@style/R16"
                 android:textStyle="bold"
                 tools:text="Неверно"/>
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/game_result_character_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textAppearance="@style/R16"
                 android:textStyle="bold"
                 tools:text="Джон Сноу"/>
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/item_game_result_wrong_answer"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:textColor="@color/gray_two"
-                android:textSize="16sp"
+                android:textAppearance="@style/R16"
                 tools:text="Игра престолов"/>
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/item_game_result_correct_answer"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="10dp"
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textAppearance="@style/R16"
                 tools:text="Властелин колец"/>
     </LinearLayout>
 </FrameLayout>

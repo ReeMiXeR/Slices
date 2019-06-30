@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                     xmlns:tools="http://schemas.android.com/tools"
-                                                     android:id="@+id/game_content"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="match_parent"
-                                                     android:clipChildren="false"
-                                                     android:clipToPadding="false"
-                                                     tools:context=".view.activity.GameActivity">
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/game_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        tools:context=".view.activity.GameActivity">
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/game_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/R16"
+            android:textColor="@color/gray_four"
             android:layout_marginTop="16dp"
+            android:textAllCaps="true"
             android:gravity="center"
-            android:text="@string/game_title"
-            android:textSize="16sp"/>
+            android:text="@string/game_title"/>
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/game_title_description"
@@ -30,8 +33,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingBottom="8dp"
-            android:textColor="@color/black"
-            android:textSize="24sp"
+            android:textAppearance="@style/R26"
             app:layout_anchor="@id/game_title"
             app:layout_anchorGravity="bottom"
             tools:text="Разделите героев"/>
@@ -45,6 +47,7 @@
             android:layout_marginBottom="16dp"
             android:background="@drawable/bg_answer_left"
             android:clickable="true"
+            android:textAppearance="@style/R18"
             android:ellipsize="end"
             android:focusable="true"
             android:gravity="center"
@@ -54,7 +57,6 @@
             android:paddingEnd="24dp"
             android:paddingBottom="16dp"
             android:textColor="@color/white"
-            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_anchorGravity="bottom|start"
             app:layout_behavior=".view.behavior.ButtonBehavior"
@@ -64,6 +66,7 @@
             android:id="@+id/game_button_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/R18"
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="16dp"
@@ -78,12 +81,11 @@
             android:paddingEnd="34dp"
             android:paddingBottom="16dp"
             android:textColor="@color/white"
-            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_behavior=".view.behavior.ButtonBehavior"
             tools:text="Какой-то а а а а а а а а а а а а"/>
 
-    <!--Высота устанавливается динамически activity-->
+    <!--Высота устанавливается динамически в activity-->
     <vs.game.slices.view.view.SliceView
             android:id="@+id/game_slice_card_second"
             android:layout_width="match_parent"

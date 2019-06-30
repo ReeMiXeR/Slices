@@ -26,6 +26,7 @@ class GameResultActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "GameResultActivity"
         private const val KEY_PARAMS = "$TAG.params"
+        private const val RECYCLER_VIEW_POOL_MAX_SIZE = 12
 
         fun getIntent(context: Context, params: GameResultParams): Intent {
             return Intent(context, GameResultActivity::class.java).apply {
@@ -94,7 +95,7 @@ class GameResultActivity : AppCompatActivity() {
             adapter = this@GameResultActivity.adapter
             hasFixedSize()
             itemAnimator = null
-            recycledViewPool.setMaxRecycledViews(R.layout.item_game_result, 12)
+            recycledViewPool.setMaxRecycledViews(R.layout.item_game_result, RECYCLER_VIEW_POOL_MAX_SIZE)
             addItemDecoration(BaseDecorator(8.dp(this@GameResultActivity), 80.dp(this@GameResultActivity)))
             layoutManager = GridLayoutManager(this@GameResultActivity, 2, RecyclerView.VERTICAL, false)
         }
