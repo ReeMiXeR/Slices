@@ -7,9 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.flexbox.AlignItems
-import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.flexbox.JustifyContent
 import kotlinx.android.synthetic.main.activity_game_result.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -18,11 +15,11 @@ import vs.game.slices.model.GameResultParams
 import vs.game.slices.view.adapter.airport.GameResultAdapter
 import vs.game.slices.view.adapter.decorator.BaseDecorator
 import vs.game.slices.view.dp
+import vs.game.slices.view.singleClick
 import vs.game.slices.viewmodel.result.GameResultEvents
 import vs.game.slices.viewmodel.result.GameResultState
 import vs.game.slices.viewmodel.result.GameResultViewModel
 import vs.game.slices.viewmodel.utils.exhaustive
-import vs.game.slices.viewmodel.utils.singleClick
 
 class GameResultActivity : AppCompatActivity() {
 
@@ -82,13 +79,13 @@ class GameResultActivity : AppCompatActivity() {
                 viewModel.onNewGameClicked()
             }
         }
-        game_result_recycler.adapter = this.adapter
-        game_result_recycler.layoutManager = FlexboxLayoutManager(this).apply {
-            alignItems = AlignItems.BASELINE
-            justifyContent = JustifyContent.CENTER
+        game_result_recycler.apply {
+            adapter = this@GameResultActivity.adapter
+            hasFixedSize()
+            itemAnimator = null
+            recycledViewPool.setMaxRecycledViews(R.layout.item_game_result, 12)
+            addItemDecoration(BaseDecorator(8.dp(this@GameResultActivity), 80.dp(this@GameResultActivity)))
+            layoutManager = GridLayoutManager(this@GameResultActivity, 2, RecyclerView.VERTICAL, false)
         }
-        game_result_recycler.addItemDecoration(BaseDecorator(8.dp(this), 80.dp(this)))
-
-//        game_result_recycler.recycledViewPool.setMaxRecycledViews()
     }
 }

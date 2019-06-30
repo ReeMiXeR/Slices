@@ -7,19 +7,12 @@ import io.reactivex.schedulers.Schedulers
 val <T> T.exhaustive: T
     get() = this
 
-private object TouchLocker {
-    internal var lastTouchTime: Long = 0
-    internal val TOUCH_FREEZE_TIME = 300L
-}
-
-fun singleClick(delay: Long = TouchLocker.TOUCH_FREEZE_TIME, touchEvent: () -> Unit) {
-    val currentTime = System.currentTimeMillis()
-    if (currentTime - delay < TouchLocker.lastTouchTime) return
-
-    TouchLocker.lastTouchTime = currentTime
-    touchEvent.invoke()
-}
-
 fun <T> Single<T>.schedulersIoToMain(): Single<T> {
     return subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+}
+
+inline fun <T1, T2> ifBothNotNull(arg1: T1?, arg2: T2?, block: (T1, T2) -> Unit): Unit? {
+    return if (arg1 != null && arg2 != null) {
+        block(arg1, arg2)
+    } else null
 }

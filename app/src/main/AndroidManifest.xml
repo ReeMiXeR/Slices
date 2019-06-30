@@ -10,15 +10,17 @@
             android:supportsRtl="true"
             android:name=".App"
             android:theme="@style/AppTheme">
-        <activity android:name=".view.activity.GameActivity">
+        <activity android:name=".view.activity.GameActivity"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
+                <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
-        <activity android:name=".view.activity.GameResultActivity"/>
+        <activity android:name=".view.activity.GameResultActivity"
+                  android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

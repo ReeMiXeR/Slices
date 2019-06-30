@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import vs.test.aviasales.ui.adapter.DisplayableItem
 
-abstract class ConstantAdapter<T : DisplayableItem, VH : RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
+abstract class Adapter<T : DisplayableItem, VH : RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
 
     private val items: MutableList<T> = mutableListOf()
 
@@ -22,12 +22,16 @@ abstract class ConstantAdapter<T : DisplayableItem, VH : RecyclerView.ViewHolder
         return createHolder(LayoutInflater.from(parent.context).inflate(itemResourceId, parent, false))
     }
 
+    final override fun getItemViewType(position: Int): Int {
+        return itemResourceId
+    }
+
     override fun onBindViewHolder(holder: VH, position: Int) {
         bind(holder, items[position], position)
     }
 
     fun set(items: List<T>) {
         this.items.addAll(items)
-        notifyItemRangeInserted(0, this.items.size)
+        notifyItemRangeInserted(0, this.items.size - 1)
     }
 }

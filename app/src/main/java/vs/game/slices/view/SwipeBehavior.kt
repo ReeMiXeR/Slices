@@ -8,6 +8,7 @@ import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sign
 
@@ -18,6 +19,7 @@ class SwipeBehavior<V : View> @JvmOverloads constructor(
 ) : CoordinatorLayout.Behavior<V>(context, attrs) {
 
     companion object {
+        private const val TAG = "SwipeBehavior"
         private const val MAX_ROTATION = 20f
 
         fun from(view: View): SwipeBehavior<View> {
@@ -28,29 +30,30 @@ class SwipeBehavior<V : View> @JvmOverloads constructor(
     private var dX: Float = 0f
     private var dY: Float = 0f
     private val rect = Rect()
+    private val screen = context.deviceWidth.toFloat()
     private val halfScreen = context.deviceWidth / 2
+    private val zoneOffset = context.deviceWidth.toFloat() / 3f
 
     var callback: ((SwipeDirection) -> Unit)? = null
+    var isLastItem = false
 
 
     override fun onTouchEvent(parent: CoordinatorLayout, child: V, ev: MotionEvent): Boolean {
-
-
-        val zoneOffset = (child.context.deviceWidth / 3).toFloat()
-
-        child.getGlobalVisibleRect(rect)
-
+        child.getHitRect(rect)
         val isTappedOnChild = rect.contains(ev.x.toInt(), ev.y.toInt())
 
-        if (isTappedOnChild) {
-            when (ev.action) {
-                MotionEvent.ACTION_DOWN -> {
+        when (ev.action) {
+            MotionEvent.ACTION_DOWN -> {
+                if (isTappedOnChild) {
                     dX = child.x - ev.rawX
                     dY = child.y - ev.rawY
                 }
+            }
 
-                MotionEvent.ACTION_MOVE -> {
-                    val rotation = min(abs(child.translationX) / halfScreen, 1f) * MAX_ROTATION * child.translationX.sign
+            MotionEvent.ACTION_MOVE -> {
+                if (isTappedOnChild) {
+                    val rotation =
+                        min(abs(child.translationX) / halfScreen, 1f) * MAX_ROTATION * child.translationX.sign
 
                     child.animate()
                         .x(ev.rawX + dX)
@@ -59,46 +62,49 @@ class SwipeBehavior<V : View> @JvmOverloads constructor(
                         .setDuration(0)
                         .start()
                 }
+            }
 
-                MotionEvent.ACTION_UP -> {
-                    val (x, y) = when {
-                        child.translationX > zoneOffset -> (child.context.deviceWidth.toFloat() - rect.left) to 0f
-                        child.translationX < -zoneOffset -> -rect.right.toFloat() to 0f
-                        else -> 0f to 0f
-                    }
+            MotionEvent.ACTION_UP -> {
+                val startX = child.translationX
 
-                    val rotation = if (child.translationX > zoneOffset || child.translationX < -zoneOffset) child.rotation else 0f
+                val (x, y) = when {
+                    child.translationX > zoneOffset -> screen to child.translationY
+                    child.translationX < -zoneOffset -> -screen to child.translationY
+                    else -> 0f to 0f
+                }
 
-                    child.animate()
-                        .translationX(x)
-                        .translationY(y)
-                        .rotation(rotation)
-                        .setInterpolator(OvershootInterpolator(1.2f))
-                        .withEndAction {
-                            with (child) {
-                                translationX = 0f
-                                translationX = 0f
-                                setRotation(0f)
-                            }
-//                            child.animate()
-//                                .setDuration(0)
-//                                .translationY(0f)
-//                                .translationX(0f)
-//                                .rotation(0f)
-//                                .start()
+                val duration = max(
+                    150,
+                    (250 * min(1f, max(abs(child.translationY), abs(child.translationX)) / halfScreen)).toLong()
+                )
+
+                child.animate()
+                    .translationX(x)
+                    .translationY(y)
+                    .rotation(0f)
+                    .setInterpolator(OvershootInterpolator(1.4f))
+                    .withEndAction {
+                        if (isLastItem.not()) {
+                            child.animate()
+                                .translationX(0f)
+                                .translationY(0f)
+                                .setDuration(0)
+                                .start()
                         }
-                        .setDuration(300)
-                        .start()
 
-                    when {
-                        child.translationX > zoneOffset -> callback?.invoke(SwipeDirection.END)
-                        child.translationX < -zoneOffset -> callback?.invoke(SwipeDirection.START)
+                        when {
+                            startX > zoneOffset -> callback?.invoke(SwipeDirection.END)
+                            startX < -zoneOffset -> callback?.invoke(SwipeDirection.START)
+                        }
                     }
-                }
+                    .setDuration(duration)
+                    .start()
 
-                else -> {
-                    return false
-                }
+
+            }
+
+            else -> {
+                return false
             }
         }
         return true

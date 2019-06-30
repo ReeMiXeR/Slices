@@ -5,8 +5,8 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
 class BaseDecorator(
-    private val defaultPadding: Int,
-    private val endBottomPadding: Int
+        private val defaultPadding: Int,
+        private val endBottomPadding: Int
 ) : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
@@ -14,25 +14,28 @@ class BaseDecorator(
 
         val childPosition = parent.getChildAdapterPosition(view)
 
-        when (childPosition % 2) {
-            0 -> {
-                outRect.bottom = defaultPadding
-                outRect.right = defaultPadding / 2
-            }
-            1 -> {
-                outRect.left = defaultPadding / 2
-                outRect.bottom = defaultPadding
-            }
-        }
+        with(outRect) {
+            top = defaultPadding
+            when (childPosition % 2) {
+                0 -> {
+                    right = defaultPadding / 2
+                    left = defaultPadding * 2
+                }
 
-        if (state.itemCount - 1 == childPosition) outRect.bottom = endBottomPadding
-
-        when (state.itemCount % 2) {
-            0 -> {
-                if (childPosition in (state.itemCount - 2) until state.itemCount) outRect.bottom = endBottomPadding
+                1 -> {
+                    left = defaultPadding / 2
+                    right = defaultPadding * 2
+                }
             }
-            1 -> {
-                if (state.itemCount - 1 == childPosition) outRect.bottom = endBottomPadding
+            when (state.itemCount % 2) {
+                0 -> if (childPosition in (state.itemCount - 2) until state.itemCount) {
+                    outRect.bottom = endBottomPadding
+                }
+
+                1 -> if (state.itemCount - 1 == childPosition) {
+                    outRect.bottom = endBottomPadding
+                }
+
             }
         }
     }

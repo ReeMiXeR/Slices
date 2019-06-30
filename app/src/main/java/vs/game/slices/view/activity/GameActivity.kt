@@ -2,9 +2,7 @@ package vs.game.slices.view.activity
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -17,13 +15,11 @@ import vs.game.slices.R
 import vs.game.slices.model.GameItem
 import vs.game.slices.model.getShuffled
 import vs.game.slices.view.SwipeBehavior
-import vs.game.slices.view.setGone
 import vs.game.slices.view.view.SliceView
 import vs.game.slices.viewmodel.game.GameEvent
 import vs.game.slices.viewmodel.game.GameState
 import vs.game.slices.viewmodel.game.GameViewModel
 import vs.game.slices.viewmodel.utils.exhaustive
-import vs.game.slices.viewmodel.utils.singleClick
 
 
 class GameActivity : AppCompatActivity() {
@@ -54,10 +50,10 @@ class GameActivity : AppCompatActivity() {
                 is GameEvent.SwitchToGameResultScreen -> {
                     finish()
                     startActivity(
-                        GameResultActivity.getIntent(
-                            this,
-                            it.data
-                        )
+                            GameResultActivity.getIntent(
+                                    this,
+                                    it.data
+                            )
                     )
                 }
             }.exhaustive
@@ -68,66 +64,62 @@ class GameActivity : AppCompatActivity() {
         viewModel.state.observe(this, Observer {
             when (it) {
                 is GameState.Content -> {
-                    clearFindViewByIdCache()
-                    main_title_description.text = it.title
-                    bindSlice(it.currentItem)
-                    it.nextItem?.let {
-                        slice_card_second.bind(it.character.name, it.character.imageName)
+                    game_container.showContent()
+                    game_title_description.text = it.title
+                    bindSlice(it.currentItem, it.nextItem == null)
+
+                    it.nextItem?.let { nextItem ->
+                        game_slice_card_second.bind(nextItem.character.name, nextItem.character.imageName)
                     } ?: run {
-                        slice_card_second.setGone()
+                        game_slice_card_second.alpha = 0f
                     }
                 }
 
                 is GameState.Stub -> {
-                    Timber.tag(TAG).d("")
+                    game_container.showStub()
+                    game_stub.text = it.error
                 }
 
                 is GameState.Loading -> {
-                    Timber.tag(TAG).d("")
+                    game_container.showLoading()
                 }
             }.exhaustive
         })
     }
 
-    private fun bindSlice(item: GameItem) {
+    private fun bindSlice(item: GameItem, isLastItem: Boolean) {
         with(item.character) {
-            slice_card_first.bind(name, imageName)
+            game_slice_card_first.bind(name, imageName)
         }
 
-        SwipeBehavior.from(slice_card_first).callback = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                slice_card_first.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
+        SwipeBehavior.from(game_slice_card_first).apply {
+            this.isLastItem = isLastItem
+            callback = {
+                swap(game_slice_card_first, game_slice_card_second)
+                when (it) {
+                    SwipeBehavior.SwipeDirection.START -> game_button_left.performClick()
+                    SwipeBehavior.SwipeDirection.END -> game_button_right.performClick()
+                }.exhaustive
             }
-
-            swap(slice_card_first, slice_card_second)
-
-            when (it) {
-                SwipeBehavior.SwipeDirection.START -> main_buttom_left.performClick()
-                SwipeBehavior.SwipeDirection.END -> main_buttom_right.performClick()
-            }.exhaustive
         }
 
         val (leftButtonText, rightButtonText) = item.serialName.getShuffled()
 
-        main_buttom_right.text = rightButtonText
-        main_buttom_left.text = leftButtonText
+        game_button_right.text = rightButtonText
+        game_button_left.text = leftButtonText
 
         val clickListener = View.OnClickListener {
-            singleClick {
-                (it as? TextView)?.let { castedView ->
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        it.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
-                    }
-                    viewModel.onAnswerClicked(castedView.text.toString())
-                } ?: throw IllegalStateException("Incorrect view type, use TextView instead")
-            }
+            (it as? TextView)?.let { castedView ->
+                viewModel.onAnswerClicked(castedView.text.toString())
+            } ?: throw IllegalStateException("Incorrect view type, use TextView instead")
         }
 
-        main_buttom_right.setOnClickListener(clickListener)
-        main_buttom_left.setOnClickListener(clickListener)
+        game_button_right.setOnClickListener(clickListener)
+        game_button_left.setOnClickListener(clickListener)
     }
 
     private fun swap(view1: SliceView, view2: SliceView) {
+        clearFindViewByIdCache()
         val elevation1 = view1.elevation
         val elevation2 = view2.elevation
         val id1 = view1.id
@@ -138,5 +130,14 @@ class GameActivity : AppCompatActivity() {
 
         view2.id = id1
         view2.elevation = elevation1
+
+        listOf(game_button_left, game_button_right)
+                .forEach {
+                    it.animate()
+                            .scaleY(1f)
+                            .scaleX(1f)
+                            .setDuration(150)
+                            .start()
+                }
     }
 }

@@ -7,7 +7,8 @@
     <ImageView
             android:id="@+id/card_character_image"
             android:layout_width="match_parent"
-            tools:background="@color/black"
+            tools:background="@color/white"
+            android:layout_marginBottom="14dp"
             android:layout_height="match_parent"/>
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -16,10 +17,16 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_gravity="bottom"
-            android:layout_margin="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:background="@drawable/black_gradient"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="14dp"
+            android:paddingBottom="16dp"
             android:textStyle="bold"
             android:textColor="@color/white"
+            android:ellipsize="end"
             android:maxLines="3"
-            android:textSize="18sp"
+            android:textSize="24sp"
             tools:text="Имя"/>
 </merge>
