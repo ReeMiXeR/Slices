@@ -17,76 +17,82 @@ import kotlin.math.min
 
 
 class ButtonBehavior<V : View> @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null
+    context: Context,
+    attrs: AttributeSet? = null
 ) : CoordinatorLayout.Behavior<V>(context, attrs) {
 
     companion object {
         private const val MAX_SCALE = 1.2f
         private const val MIN_SCALE = 0.9f
+
+        fun from(view: View): ButtonBehavior<View> {
+            return (view.layoutParams as CoordinatorLayout.LayoutParams).behavior as ButtonBehavior<View>
+        }
     }
 
     private var secondButton: AppCompatTextView? = null
     private val halfScreen = context.deviceWidth / 2
     private val zoneOffset = context.deviceWidth.toFloat() / 2f
     private val rect = Rect()
+    var block = false
 
     override fun layoutDependsOn(parent: CoordinatorLayout, child: V, dependency: View): Boolean {
         return dependency is SliceView
     }
 
     override fun onMeasureChild(
-            parent: CoordinatorLayout,
-            child: V,
-            parentWidthMeasureSpec: Int,
-            widthUsed: Int,
-            parentHeightMeasureSpec: Int,
-            heightUsed: Int
+        parent: CoordinatorLayout,
+        child: V,
+        parentWidthMeasureSpec: Int,
+        widthUsed: Int,
+        parentHeightMeasureSpec: Int,
+        heightUsed: Int
     ): Boolean {
         initSecondButtonIfNeed(child, parent)
 
         val childMeasureSpec = View.MeasureSpec.makeMeasureSpec(
-                halfScreen - 4.dp(child.context),
-                View.MeasureSpec.EXACTLY
+            halfScreen - 4.dp(child.context),
+            View.MeasureSpec.EXACTLY
         )
         child.measure(childMeasureSpec, View.MeasureSpec.UNSPECIFIED)
         return true
     }
 
     override fun onDependentViewChanged(parent: CoordinatorLayout, child: V, dependency: View): Boolean {
+        if (block) return false
 
         val ratio = min(
-                1f + abs(dependency.translationX) / zoneOffset,
-                MAX_SCALE
+            1f + abs(dependency.translationX) / zoneOffset,
+            MAX_SCALE
         )
 
         val ratio2 = max(
-                1 - abs(dependency.translationX / 2) / zoneOffset,
-                MIN_SCALE
+            1 - abs(dependency.translationX / 2) / zoneOffset,
+            MIN_SCALE
         )
 
         when {
             dependency.translationX > 0f -> {
                 child.animate()
-                        .scaleY(if (child.id == R.id.game_button_right) ratio else ratio2)
-                        .scaleX(if (child.id == R.id.game_button_right) ratio else ratio2)
-                        .setDuration(0)
-                        .start()
+                    .scaleY(if (child.id == R.id.game_button_right) ratio else ratio2)
+                    .scaleX(if (child.id == R.id.game_button_right) ratio else ratio2)
+                    .setDuration(0)
+                    .start()
             }
 
             dependency.translationX < 0f -> {
                 child.animate()
-                        .scaleY(if (child.id == R.id.game_button_right) ratio2 else ratio)
-                        .scaleX(if (child.id == R.id.game_button_right) ratio2 else ratio)
-                        .setDuration(0)
-                        .start()
+                    .scaleY(if (child.id == R.id.game_button_right) ratio2 else ratio)
+                    .scaleX(if (child.id == R.id.game_button_right) ratio2 else ratio)
+                    .setDuration(0)
+                    .start()
             }
             dependency.translationX == 0f -> {
                 child.animate()
-                        .scaleY(1f)
-                        .scaleX(1f)
-                        .setDuration(150)
-                        .start()
+                    .scaleY(1f)
+                    .scaleX(1f)
+                    .setDuration(150)
+                    .start()
             }
         }
         return false
@@ -124,10 +130,10 @@ class ButtonBehavior<V : View> @JvmOverloads constructor(
 
     private fun View?.scaleTo(x: Float, y: Float) {
         this?.animate()
-                ?.scaleX(x)
-                ?.scaleY(y)
-                ?.setDuration(200)
-                ?.start()
+            ?.scaleX(x)
+            ?.scaleY(y)
+            ?.setDuration(200)
+            ?.start()
     }
 
     private fun initSecondButtonIfNeed(child: V, parent: CoordinatorLayout) {

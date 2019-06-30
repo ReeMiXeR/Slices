@@ -14,6 +14,7 @@ import vs.game.slices.R
 import vs.game.slices.model.GameItem
 import vs.game.slices.model.getShuffled
 import vs.game.slices.view.afterMeasured
+import vs.game.slices.view.behavior.ButtonBehavior
 import vs.game.slices.view.behavior.SwipeBehavior
 import vs.game.slices.view.setGone
 import vs.game.slices.viewmodel.game.GameEvent
@@ -119,6 +120,10 @@ class GameActivity : AppCompatActivity() {
         game_button_left.text = leftButtonText
 
         val clickListener = View.OnClickListener {
+            listOf(game_button_right, game_button_left).forEach {
+                ButtonBehavior.from(it).block = true
+            }
+
             SwipeBehavior.from(game_slice_card_first).swipeOutOrReset(
                     child = game_slice_card_first,
                     force = when {
@@ -134,6 +139,7 @@ class GameActivity : AppCompatActivity() {
     private fun restoreButtons() {
         listOf(game_button_left, game_button_right)
                 .forEach {
+                    ButtonBehavior.from(it).block = false
                     it.animate()
                             .scaleY(1f)
                             .scaleX(1f)
