@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import vs.game.slices.view.deviceWidth
@@ -81,7 +82,7 @@ class SwipeBehavior<V : View> @JvmOverloads constructor(
 
         val direction = when {
             force == SwipeDirection.END || startX > zoneOffset -> SwipeDirection.END
-            force == SwipeDirection.START || startX < -zoneOffset -> SwipeDirection.END
+            force == SwipeDirection.START || startX < -zoneOffset -> SwipeDirection.START
             else -> null
         }
 
@@ -92,15 +93,26 @@ class SwipeBehavior<V : View> @JvmOverloads constructor(
         }
 
         val duration = max(
-                if (force == null) 150L else 300L,
+                if (force == null) 150L else 350L,
                 (250 * min(1f, max(abs(child.translationY), abs(startX)) / halfScreen)).toLong()
         )
+
+        val rotation = when (force) {
+            SwipeDirection.START -> -MAX_ROTATION
+            SwipeDirection.END -> MAX_ROTATION
+            null -> 0f
+        }
+
+        val interpolator = when (force) {
+            null -> OvershootInterpolator(1.4f)
+            else -> DecelerateInterpolator(1.25f)
+        }
 
         child.animate()
                 .translationX(x)
                 .translationY(y)
-                .rotation(if (force != null) 30f else 0f)
-                .setInterpolator(OvershootInterpolator(1.4f))
+                .rotation(rotation)
+                .setInterpolator(interpolator)
                 .withEndAction {
                     if (isLastItem.not()) {
                         child.animate()

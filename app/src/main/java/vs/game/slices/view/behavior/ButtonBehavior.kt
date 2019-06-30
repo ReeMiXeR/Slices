@@ -3,8 +3,10 @@ package vs.game.slices.view.behavior
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import vs.game.slices.R
 import vs.game.slices.view.deviceWidth

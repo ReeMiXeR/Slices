@@ -7,144 +7,16 @@
     android:layout_height="match_parent"
     android:clipChildren="false"
     android:clipToPadding="false"
-    app:state_content="@+id/game_content"
+    app:state_content="@id/game_content"
     app:state_init="loading"
-    app:state_loading="@+id/game_loading"
-    app:state_stub="@+id/game_stub"
+    app:state_loading="@id/game_loading"
+    app:state_stub="@id/game_stub"
     tools:context=".view.activity.GameActivity">
 
-    <FrameLayout
-        android:id="@id/game_loading"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+    <include layout="@layout/layout_stub" />
 
-        <androidx.core.widget.ContentLoadingProgressBar
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            android:indeterminateTint="@color/light_blue" />
-    </FrameLayout>
+    <include layout="@layout/layout_game_content" />
 
-    <TextView
-        android:id="@id/game_stub"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textColor="@color/black"
-        android:textSize="30sp"
-        android:visibility="gone"
-        tools:text="Что-то пошло не так" />
+    <include layout="@layout/layout_loading" />
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@id/game_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        tools:context=".view.activity.GameActivity">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/game_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:text="@string/game_title"
-            android:textSize="16sp" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/game_title_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="8dp"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="2"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="8dp"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            app:layout_anchor="@id/game_title"
-            app:layout_anchorGravity="bottom"
-            tools:text="Разделите героев" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/game_button_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/bg_answer_left"
-            android:clickable="true"
-            android:ellipsize="end"
-            android:focusable="true"
-            android:gravity="center"
-            android:maxLines="3"
-            android:paddingStart="34dp"
-            android:paddingTop="16dp"
-            android:paddingEnd="24dp"
-            android:paddingBottom="16dp"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_anchorGravity="bottom|start"
-            app:layout_behavior=".view.behavior.ButtonBehavior"
-            tools:text="Какой-то а а а а а а а а а а а а" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/game_button_right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_answer_right"
-            android:clickable="true"
-            android:ellipsize="end"
-            android:focusable="true"
-            android:gravity="center"
-            android:maxLines="3"
-            android:paddingStart="24dp"
-            android:paddingTop="16dp"
-            android:paddingEnd="34dp"
-            android:paddingBottom="16dp"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_behavior=".view.behavior.ButtonBehavior"
-            tools:text="Какой-то а а а а а а а а а а а а" />
-
-        <vs.game.slices.view.view.SliceView
-            android:id="@+id/game_slice_card_second"
-            android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/bg_card_elevation16"
-            android:elevation="2dp"
-            android:padding="16dp"
-            app:layout_anchor="@id/game_title_description"
-            app:layout_anchorGravity="bottom"
-            app:layout_behavior=".view.behavior.SwipeBehavior" />
-
-        <vs.game.slices.view.view.SliceView
-            android:id="@+id/game_slice_card_first"
-            android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/bg_card_elevation16"
-            android:elevation="4dp"
-            android:padding="16dp"
-            app:layout_anchor="@id/game_title_description"
-            app:layout_anchorGravity="bottom"
-            app:layout_behavior=".view.behavior.SwipeBehavior" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </vs.game.slices.view.view.StateViewGroup>

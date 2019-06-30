@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_game.*
+import kotlinx.android.synthetic.main.layout_game_content.*
+import kotlinx.android.synthetic.main.layout_stub.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import vs.game.slices.R
 import vs.game.slices.model.GameItem
@@ -62,7 +64,7 @@ class GameActivity : AppCompatActivity() {
                     game_container.showContent()
                     game_title_description.text = it.title
 
-                    bindMainSlice(it.currentItem, it.nextItem == null)
+                    bindMainCard(it.currentItem, it.nextItem == null)
                     it.nextItem?.let { nextItem ->
                         game_slice_card_second.bind(nextItem.character.name, nextItem.character.imageName)
                     } ?: run {
@@ -82,7 +84,7 @@ class GameActivity : AppCompatActivity() {
         })
     }
 
-    private fun bindMainSlice(item: GameItem, isLastItem: Boolean) {
+    private fun bindMainCard(item: GameItem, isLastItem: Boolean) {
         with(item.character) {
             game_slice_card_first.bind(name, imageName)
         }
@@ -104,7 +106,6 @@ class GameActivity : AppCompatActivity() {
         }
 
         val (leftButtonText, rightButtonText) = item.serialName.getShuffled()
-
         game_button_right.text = rightButtonText
         game_button_left.text = leftButtonText
 
@@ -117,7 +118,6 @@ class GameActivity : AppCompatActivity() {
                     }
             )
         }
-
         game_button_right.setOnClickListener(clickListener)
         game_button_left.setOnClickListener(clickListener)
     }
@@ -127,11 +127,13 @@ class GameActivity : AppCompatActivity() {
 
         val elevation1 = view1.elevation
         val elevation2 = view2.elevation
+
         val id1 = view1.id
         val id2 = view2.id
 
         view1.id = id2
         view1.elevation = elevation2
+
         view2.id = id1
         view2.elevation = elevation1
 
