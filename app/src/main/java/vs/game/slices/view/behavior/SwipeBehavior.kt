@@ -13,6 +13,10 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sign
+import android.os.SystemClock
+import android.icu.lang.UCharacter.GraphemeClusterBreak.V
+
+
 
 typealias OnItemSwiped = ((SwipeBehavior.SwipeDirection) -> Unit)?
 
@@ -22,8 +26,10 @@ class SwipeBehavior<V : View> @JvmOverloads constructor(
 ) : CoordinatorLayout.Behavior<V>(context, attrs) {
 
     companion object {
-        private const val TAG = "SwipeBehavior"
         private const val MAX_ROTATION = 20f
+        private const val ANIMATION_MAX_TIME = 350L
+        private const val ANIMATION_MIN_TIME = 250L
+        private const val DEFAULT = 0f
 
         fun from(view: View): SwipeBehavior<View> {
             return (view.layoutParams as CoordinatorLayout.LayoutParams).behavior as SwipeBehavior<View>
@@ -87,20 +93,20 @@ class SwipeBehavior<V : View> @JvmOverloads constructor(
         }
 
         val (x, y) = when (direction) {
-            SwipeDirection.END -> screen to child.translationY
-            SwipeDirection.START -> -screen to child.translationY
-            else -> 0f to 0f
+            SwipeDirection.END -> screen * 1.15f to child.translationY
+            SwipeDirection.START -> -screen * 1.15f to child.translationY
+            else -> DEFAULT to DEFAULT
         }
 
         val duration = max(
-                if (force == null) 150L else 350L,
-                (250 * min(1f, max(abs(child.translationY), abs(startX)) / halfScreen)).toLong()
+                if (force == null) ANIMATION_MIN_TIME else ANIMATION_MAX_TIME,
+                (ANIMATION_MAX_TIME * min(1f, max(abs(child.translationY), abs(startX)) / halfScreen)).toLong()
         )
 
         val rotation = when (force) {
             SwipeDirection.START -> -MAX_ROTATION
             SwipeDirection.END -> MAX_ROTATION
-            null -> 0f
+            null -> DEFAULT
         }
 
         val interpolator = when (force) {
@@ -116,9 +122,9 @@ class SwipeBehavior<V : View> @JvmOverloads constructor(
                 .withEndAction {
                     if (isLastItem.not()) {
                         child.animate()
-                                .translationX(0f)
-                                .translationY(0f)
-                                .rotation(0f)
+                                .translationX(DEFAULT)
+                                .translationY(DEFAULT)
+                                .rotation(DEFAULT)
                                 .setDuration(0)
                                 .start()
                     }

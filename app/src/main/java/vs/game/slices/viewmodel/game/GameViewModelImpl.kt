@@ -25,12 +25,14 @@ class GameViewModelImpl(private val repository: GameRepository) : GameViewModel(
     }
 
     override fun onAnswerClicked(answer: String) {
+        if (isRedirected) return
+
         answers.add(answer)
         position = position.inc()
 
         if (position < data.size) {
             produceContent()
-        } else if (isRedirected.not()) {
+        } else {
             produceSwitchEvent()
         }
     }

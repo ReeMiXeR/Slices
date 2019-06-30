@@ -58,7 +58,7 @@ inline fun <T : View> T.afterMeasured(crossinline f: T.() -> Unit) {
 
 private object TouchLocker {
     internal var lastTouchTime: Long = 0
-    internal val TOUCH_FREEZE_TIME = 300L
+    internal const val TOUCH_FREEZE_TIME = 300L
 }
 
 fun singleClick(delay: Long = TouchLocker.TOUCH_FREEZE_TIME, touchEvent: () -> Unit) {
@@ -67,25 +67,4 @@ fun singleClick(delay: Long = TouchLocker.TOUCH_FREEZE_TIME, touchEvent: () -> U
 
     TouchLocker.lastTouchTime = currentTime
     touchEvent.invoke()
-}
-
-fun View.scaleTap() {
-    setOnTouchListener { v, event ->
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                v.animate().scaleX(0.9f).setDuration(100).start()
-                v.animate().scaleY(0.9f).setDuration(100).start()
-                return@setOnTouchListener false
-            }
-            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-                v.animate().cancel()
-                v.animate().scaleX(1f).setDuration(200).start()
-                v.animate().scaleY(1f).setDuration(200).start()
-                return@setOnTouchListener false
-            }
-            else -> {
-                false
-            }
-        }
-    }
 }

@@ -28,6 +28,7 @@ class ButtonBehavior<V : View> @JvmOverloads constructor(
 
     private val halfScreen = context.deviceWidth / 2
     private val zoneOffset = context.deviceWidth.toFloat() / 2f
+    private val rect = Rect()
 
     override fun layoutDependsOn(parent: CoordinatorLayout, child: V, dependency: View): Boolean {
         return dependency is SliceView
@@ -87,5 +88,42 @@ class ButtonBehavior<V : View> @JvmOverloads constructor(
             }
         }
         return false
+    }
+
+    override fun onInterceptTouchEvent(parent: CoordinatorLayout, child: V, ev: MotionEvent): Boolean {
+        child.getGlobalVisibleRect(rect)
+        return rect.contains(ev.x.toInt(), ev.y.toInt())
+    }
+
+    override fun onTouchEvent(parent: CoordinatorLayout, child: V, ev: MotionEvent): Boolean {
+        when (ev.action) {
+            MotionEvent.ACTION_DOWN -> {
+                child.animate()
+                        .scaleX(1.2f)
+                        .scaleY(1.2f)
+                        .setDuration(100)
+                        .start()
+            }
+
+            MotionEvent.ACTION_CANCEL,
+            MotionEvent.ACTION_UP -> {
+                child.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(200)
+                        .start()
+            }
+
+            else -> {
+                return false
+            }
+        }
+        child.getGlobalVisibleRect(rect)
+
+        if (ev.action == MotionEvent.ACTION_UP && rect.contains(ev.x.toInt(), ev.y.toInt())) {
+            child.performClick()
+        }
+
+        return true
     }
 }

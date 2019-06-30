@@ -93,15 +93,17 @@ class GameActivity : AppCompatActivity() {
             this.isLastItem = isLastItem
             listener = {
                 swap(game_slice_card_first, game_slice_card_second)
-                when (it) {
-                    SwipeBehavior.SwipeDirection.START -> {
-                        viewModel.onAnswerClicked(game_button_left.text.toString())
-                    }
+                viewModel.onAnswerClicked(
+                        when (it) {
+                            SwipeBehavior.SwipeDirection.START -> {
+                                game_button_left.text.toString()
+                            }
 
-                    SwipeBehavior.SwipeDirection.END -> {
-                        viewModel.onAnswerClicked(game_button_right.text.toString())
-                    }
-                }.exhaustive
+                            SwipeBehavior.SwipeDirection.END -> {
+                                game_button_right.text.toString()
+                            }
+                        }
+                )
             }
         }
 
