@@ -41,7 +41,7 @@ class SwipeBehavior<V : View> @JvmOverloads constructor(
     private val rect = Rect()
     private val screen = context.deviceWidth.toFloat()
     private val halfScreen = context.deviceWidth / 2
-    private val zoneOffset = context.deviceWidth.toFloat() / 3f
+    private val zoneOffset = context.deviceWidth.toFloat() / 4f
 
     var listener: OnItemSwiped = null
     var isLastItem = false
