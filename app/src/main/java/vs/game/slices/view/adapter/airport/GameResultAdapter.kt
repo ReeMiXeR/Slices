@@ -9,12 +9,8 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import vs.game.slices.R
 import vs.game.slices.model.GameResultItem
-import vs.game.slices.view.activity.GameActivity
+import vs.game.slices.view.*
 import vs.game.slices.view.adapter.base.Adapter
-import vs.game.slices.view.deviceHeight
-import vs.game.slices.view.dp
-import vs.game.slices.view.precomputeText
-import vs.game.slices.view.toggleGone
 
 
 class GameResultAdapter : Adapter<GameResultItem, GameResultViewHolder>() {
@@ -52,7 +48,7 @@ class GameResultAdapter : Adapter<GameResultItem, GameResultViewHolder>() {
             holder.correctness.isActivated = item.isCorrect
 
             Glide.with(context)
-                    .load(Uri.parse(GameActivity.ASSET_PATH.format(this.item.character.imageName)))
+                    .load(Uri.parse(ASSET_PATH.format(this.item.character.imageName)))
                     .transform(CenterCrop(), RoundedCorners(16.dp(context)))
                     .placeholder(R.drawable.placeholder)
                     .into(holder.background)

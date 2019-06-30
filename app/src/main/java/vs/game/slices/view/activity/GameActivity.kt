@@ -4,17 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_game.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import vs.game.slices.R
 import vs.game.slices.model.GameItem
 import vs.game.slices.model.getShuffled
-import vs.game.slices.view.SwipeBehavior
+import vs.game.slices.view.behavior.SwipeBehavior
+import vs.game.slices.view.setGone
 import vs.game.slices.view.view.SliceView
 import vs.game.slices.viewmodel.game.GameEvent
 import vs.game.slices.viewmodel.game.GameState
@@ -25,10 +24,6 @@ import vs.game.slices.viewmodel.utils.exhaustive
 class GameActivity : AppCompatActivity() {
 
     companion object {
-        const val ASSET_PATH = "file:///android_asset/%s.jpg"
-
-        private const val TAG = "GameActivity"
-
         fun getIntent(context: Context): Intent {
             return Intent(context, GameActivity::class.java)
         }
@@ -66,18 +61,18 @@ class GameActivity : AppCompatActivity() {
                 is GameState.Content -> {
                     game_container.showContent()
                     game_title_description.text = it.title
-                    bindSlice(it.currentItem, it.nextItem == null)
 
+                    bindMainSlice(it.currentItem, it.nextItem == null)
                     it.nextItem?.let { nextItem ->
                         game_slice_card_second.bind(nextItem.character.name, nextItem.character.imageName)
                     } ?: run {
-                        game_slice_card_second.alpha = 0f
+                        game_slice_card_second.setGone()
                     }
                 }
 
                 is GameState.Stub -> {
                     game_container.showStub()
-                    game_stub.text = it.error
+                    game_stub.text = getString(it.error)
                 }
 
                 is GameState.Loading -> {
@@ -87,18 +82,23 @@ class GameActivity : AppCompatActivity() {
         })
     }
 
-    private fun bindSlice(item: GameItem, isLastItem: Boolean) {
+    private fun bindMainSlice(item: GameItem, isLastItem: Boolean) {
         with(item.character) {
             game_slice_card_first.bind(name, imageName)
         }
 
         SwipeBehavior.from(game_slice_card_first).apply {
             this.isLastItem = isLastItem
-            callback = {
+            listener = {
                 swap(game_slice_card_first, game_slice_card_second)
                 when (it) {
-                    SwipeBehavior.SwipeDirection.START -> game_button_left.performClick()
-                    SwipeBehavior.SwipeDirection.END -> game_button_right.performClick()
+                    SwipeBehavior.SwipeDirection.START -> {
+                        viewModel.onAnswerClicked(game_button_left.text.toString())
+                    }
+
+                    SwipeBehavior.SwipeDirection.END -> {
+                        viewModel.onAnswerClicked(game_button_right.text.toString())
+                    }
                 }.exhaustive
             }
         }
@@ -109,9 +109,13 @@ class GameActivity : AppCompatActivity() {
         game_button_left.text = leftButtonText
 
         val clickListener = View.OnClickListener {
-            (it as? TextView)?.let { castedView ->
-                viewModel.onAnswerClicked(castedView.text.toString())
-            } ?: throw IllegalStateException("Incorrect view type, use TextView instead")
+            SwipeBehavior.from(game_slice_card_first).swipeOutOrReset(
+                    child = game_slice_card_first,
+                    force = when {
+                        it.id == R.id.game_button_right -> SwipeBehavior.SwipeDirection.END
+                        else -> SwipeBehavior.SwipeDirection.START
+                    }
+            )
         }
 
         game_button_right.setOnClickListener(clickListener)
@@ -120,6 +124,7 @@ class GameActivity : AppCompatActivity() {
 
     private fun swap(view1: SliceView, view2: SliceView) {
         clearFindViewByIdCache()
+
         val elevation1 = view1.elevation
         val elevation2 = view2.elevation
         val id1 = view1.id
@@ -127,7 +132,6 @@ class GameActivity : AppCompatActivity() {
 
         view1.id = id2
         view1.elevation = elevation2
-
         view2.id = id1
         view2.elevation = elevation1
 

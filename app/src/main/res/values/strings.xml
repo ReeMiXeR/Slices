@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Slices</string>
+    <string name="game_result_not_enough_error">Недостаточно данных для начала игры</string>
+    <string name="game_result_common_error">Упс, что-то пошло не так</string>
     <string name="game_result_correct">Верно</string>
     <string name="game_result_wrong">Неверно</string>
     <string name="game_result_button_text">Попробовать ещё раз</string>

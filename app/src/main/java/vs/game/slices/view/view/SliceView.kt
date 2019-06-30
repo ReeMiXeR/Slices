@@ -11,13 +11,13 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import kotlinx.android.synthetic.main.view_card.view.*
 import vs.game.slices.R
-import vs.game.slices.view.activity.GameActivity
+import vs.game.slices.view.ASSET_PATH
 import vs.game.slices.view.dp
 
 class SliceView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyle: Int = 0
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyle: Int = 0
 ) : FrameLayout(context, attrs, defStyle) {
 
     private val cornerRadius by lazy { 16.dp(context) }
@@ -30,10 +30,10 @@ class SliceView @JvmOverloads constructor(
         card_item_title.text = title
 
         Glide.with(context)
-            .load(Uri.parse(GameActivity.ASSET_PATH.format(imageName)))
-            .transform(CenterCrop(), RoundedCorners(cornerRadius))
-            .placeholder(R.drawable.placeholder)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .into(card_character_image)
+                .load(Uri.parse(ASSET_PATH.format(imageName)))
+                .transform(CenterCrop(), RoundedCorners(cornerRadius))
+                .placeholder(R.drawable.placeholder)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(card_character_image)
     }
 }

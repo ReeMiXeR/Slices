@@ -1,4 +1,4 @@
-package vs.game.slices.viewmodel
+package vs.game.slices.viewmodel.base
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

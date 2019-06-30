@@ -1,7 +1,8 @@
 package vs.game.slices.viewmodel.game
 
 import androidx.lifecycle.MutableLiveData
-import vs.game.slices.exceptions.NotEnoughDataException
+import vs.game.slices.R
+import vs.game.slices.data.exceptions.NotEnoughDataException
 import vs.game.slices.model.*
 import vs.game.slices.viewmodel.repository.GameRepository
 import vs.game.slices.viewmodel.utils.SingleLiveEvent
@@ -37,23 +38,23 @@ class GameViewModelImpl(private val repository: GameRepository) : GameViewModel(
     private fun initData() {
         safeSubscribe {
             repository.getGameData()
-                .map { game ->
-                    if (game.items.size <= 1) throw NotEnoughDataException()
-                    else game.items.toGameList() to game.title
-                }
-                .schedulersIoToMain()
-                .doAfterSuccess { produceContent() }
-                .subscribe(
-                    { (data, title) ->
-                        this.data = data
-                        this.title = title
-                    },
-                    {
-                        state.value = when (it) {
-                            is NotEnoughDataException -> GameState.Stub("Недостаточно данных для начала игры")
-                            else -> GameState.Stub("Упс, что-то опшло не так")
-                        }
-                    })
+                    .map { game ->
+                        if (game.items.size <= 1) throw NotEnoughDataException()
+                        else game.items.toGameList() to game.title
+                    }
+                    .schedulersIoToMain()
+                    .doAfterSuccess { produceContent() }
+                    .subscribe(
+                            { (data, title) ->
+                                this.data = data
+                                this.title = title
+                            },
+                            {
+                                state.value = when (it) {
+                                    is NotEnoughDataException -> GameState.Stub(R.string.game_result_not_enough_error)
+                                    else -> GameState.Stub(R.string.game_result_common_error)
+                                }
+                            })
 
         }
     }
@@ -64,33 +65,31 @@ class GameViewModelImpl(private val repository: GameRepository) : GameViewModel(
         return map {
             val correctSerialName = it.name
             val wrongNames = serialNames
-                .filter { serialName ->
-                    serialName.equals(correctSerialName, false).not()
-                }
+                    .filter { serialName ->
+                        serialName.equals(correctSerialName, false).not()
+                    }
 
             it.items.map { character ->
                 GameItem(
-                    character = character,
-                    serialName = SerialName(
-                        correctName = correctSerialName,
-                        wrongName = wrongNames.random()
-                    )
+                        character = character,
+                        serialName = SerialName(
+                                correctName = correctSerialName,
+                                wrongName = wrongNames.random()
+                        )
                 )
             }
         }.flatten().shuffled()
     }
 
     private fun produceContent() {
-        state.postValue(
-            data.getOrNull(position)?.let { gameItem ->
-
-                GameState.Content(
+        state.value = data.getOrNull(position)?.let { gameItem ->
+            GameState.Content(
                     currentItem = gameItem,
                     nextItem = data.getOrNull(position.inc()),
                     title = title
-                )
-            } ?: GameState.Stub("Упс, что-то опшло не так")
-        )
+            )
+        } ?: GameState.Stub(R.string.game_result_common_error)
+
     }
 
     private fun produceSwitchEvent() {
@@ -102,19 +101,17 @@ class GameViewModelImpl(private val repository: GameRepository) : GameViewModel(
             if (isCorrectAnswer) correctAnswers += 1
 
             GameResultItem(
-                gameItem,
-                isCorrectAnswer
+                    gameItem,
+                    isCorrectAnswer
             )
         }
 
-        events.postValue(
-            GameEvent.SwitchToGameResultScreen(
+        events.value = GameEvent.SwitchToGameResultScreen(
                 GameResultParams(
-                    score = "$correctAnswers / ${data.size}",
-                    items = gameResult,
-                    title = title
+                        score = "$correctAnswers / ${data.size}",
+                        items = gameResult,
+                        title = title
                 )
-            )
         )
     }
 }

@@ -1,3 +1,3 @@
-package vs.game.slices.exceptions
+package vs.game.slices.data.exceptions
 
 class NotEnoughDataException : Throwable()
