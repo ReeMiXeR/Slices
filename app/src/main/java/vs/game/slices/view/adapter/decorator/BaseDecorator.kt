@@ -15,7 +15,11 @@ class BaseDecorator(
         val childPosition = parent.getChildAdapterPosition(view)
 
         with(outRect) {
-            top = defaultPadding
+            top = when (childPosition) {
+                in 0..1 -> defaultPadding * 2
+                else -> defaultPadding
+            }
+
             when (childPosition % 2) {
                 0 -> {
                     right = defaultPadding / 2
@@ -35,7 +39,6 @@ class BaseDecorator(
                 1 -> if (state.itemCount - 1 == childPosition) {
                     outRect.bottom = endBottomPadding
                 }
-
             }
         }
     }

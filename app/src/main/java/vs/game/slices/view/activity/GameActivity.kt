@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.android.synthetic.main.layout_game_content.*
 import kotlinx.android.synthetic.main.layout_stub.*
@@ -14,9 +13,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import vs.game.slices.R
 import vs.game.slices.model.GameItem
 import vs.game.slices.model.getShuffled
+import vs.game.slices.view.afterMeasured
 import vs.game.slices.view.behavior.SwipeBehavior
 import vs.game.slices.view.setGone
-import vs.game.slices.view.view.SliceView
 import vs.game.slices.viewmodel.game.GameEvent
 import vs.game.slices.viewmodel.game.GameState
 import vs.game.slices.viewmodel.game.GameViewModel
@@ -37,8 +36,20 @@ class GameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
 
-        observeState()
-        observeEvents()
+        initView()
+    }
+
+    private fun initView() {
+        game_content.afterMeasured {
+            val size = game_button_left.top - game_title_description.bottom
+            listOf(game_slice_card_first, game_slice_card_second)
+                    .forEach {
+                        it.layoutParams.height = size
+                        it.requestLayout()
+                    }
+            observeState()
+            observeEvents()
+        }
     }
 
     private fun observeEvents() {
@@ -92,7 +103,7 @@ class GameActivity : AppCompatActivity() {
         SwipeBehavior.from(game_slice_card_first).apply {
             this.isLastItem = isLastItem
             listener = {
-                swap(game_slice_card_first, game_slice_card_second)
+                restoreButtons()
                 viewModel.onAnswerClicked(
                         when (it) {
                             SwipeBehavior.SwipeDirection.START -> {
@@ -124,21 +135,7 @@ class GameActivity : AppCompatActivity() {
         game_button_left.setOnClickListener(clickListener)
     }
 
-    private fun swap(view1: SliceView, view2: SliceView) {
-        clearFindViewByIdCache()
-
-        val elevation1 = view1.elevation
-        val elevation2 = view2.elevation
-
-        val id1 = view1.id
-        val id2 = view2.id
-
-        view1.id = id2
-        view1.elevation = elevation2
-
-        view2.id = id1
-        view2.elevation = elevation1
-
+    private fun restoreButtons() {
         listOf(game_button_left, game_button_right)
                 .forEach {
                     it.animate()

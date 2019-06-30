@@ -24,8 +24,7 @@ import vs.game.slices.viewmodel.utils.exhaustive
 class GameResultActivity : AppCompatActivity() {
 
     companion object {
-        const val TAG = "GameResultActivity"
-
+        private const val TAG = "GameResultActivity"
         private const val KEY_PARAMS = "$TAG.params"
 
         fun getIntent(context: Context, params: GameResultParams): Intent {
@@ -79,7 +78,19 @@ class GameResultActivity : AppCompatActivity() {
                 viewModel.onNewGameClicked()
             }
         }
+
         game_result_recycler.apply {
+            addOnScrollListener(
+                object : RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        val showElevation = this@apply.canScrollVertically(-1)
+                        game_result_title.isSelected = showElevation
+                        game_result_title_description.isSelected = showElevation
+                        game_result_score.isSelected = showElevation
+                    }
+                }
+            )
+
             adapter = this@GameResultActivity.adapter
             hasFixedSize()
             itemAnimator = null

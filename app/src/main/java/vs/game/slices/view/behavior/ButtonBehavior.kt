@@ -5,11 +5,11 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import vs.game.slices.R
 import vs.game.slices.view.deviceWidth
+import vs.game.slices.view.dp
 import vs.game.slices.view.view.SliceView
 import kotlin.math.abs
 import kotlin.math.max
@@ -26,6 +26,7 @@ class ButtonBehavior<V : View> @JvmOverloads constructor(
         private const val MIN_SCALE = 0.9f
     }
 
+    private var secondButton: AppCompatTextView? = null
     private val halfScreen = context.deviceWidth / 2
     private val zoneOffset = context.deviceWidth.toFloat() / 2f
     private val rect = Rect()
@@ -42,9 +43,10 @@ class ButtonBehavior<V : View> @JvmOverloads constructor(
             parentHeightMeasureSpec: Int,
             heightUsed: Int
     ): Boolean {
-        val lp = (child.layoutParams as ViewGroup.MarginLayoutParams)
+        initSecondButtonIfNeed(child, parent)
+
         val childMeasureSpec = View.MeasureSpec.makeMeasureSpec(
-                halfScreen - lp.marginStart - lp.marginEnd,
+                halfScreen - 4.dp(child.context),
                 View.MeasureSpec.EXACTLY
         )
         child.measure(childMeasureSpec, View.MeasureSpec.UNSPECIFIED)
@@ -98,20 +100,14 @@ class ButtonBehavior<V : View> @JvmOverloads constructor(
     override fun onTouchEvent(parent: CoordinatorLayout, child: V, ev: MotionEvent): Boolean {
         when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
-                child.animate()
-                        .scaleX(1.2f)
-                        .scaleY(1.2f)
-                        .setDuration(100)
-                        .start()
+                child.scaleTo(1.2f, 1.2f)
+                secondButton?.scaleTo(0.9f, 0.9f)
             }
 
             MotionEvent.ACTION_CANCEL,
             MotionEvent.ACTION_UP -> {
-                child.animate()
-                        .scaleX(1f)
-                        .scaleY(1f)
-                        .setDuration(200)
-                        .start()
+                child.scaleTo(1f, 1f)
+                secondButton?.scaleTo(1f, 1f)
             }
 
             else -> {
@@ -119,11 +115,28 @@ class ButtonBehavior<V : View> @JvmOverloads constructor(
             }
         }
         child.getGlobalVisibleRect(rect)
-
         if (ev.action == MotionEvent.ACTION_UP && rect.contains(ev.x.toInt(), ev.y.toInt())) {
             child.performClick()
         }
 
         return true
+    }
+
+    private fun View?.scaleTo(x: Float, y: Float) {
+        this?.animate()
+                ?.scaleX(x)
+                ?.scaleY(y)
+                ?.setDuration(200)
+                ?.start()
+    }
+
+    private fun initSecondButtonIfNeed(child: V, parent: CoordinatorLayout) {
+        if (secondButton == null) {
+            if (child.id == R.id.game_button_right) {
+                secondButton = parent.findViewById(R.id.game_button_left)
+            } else if (child.id == R.id.game_button_left) {
+                secondButton = parent.findViewById(R.id.game_button_right)
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package vs.game.slices.view.view
 
 import android.content.Context
+import android.graphics.Canvas
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -21,19 +22,35 @@ class SliceView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyle) {
 
     private val cornerRadius by lazy { 16.dp(context) }
+    private var dataToBind: Pair<String, String>? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_card, this, true)
     }
 
-    fun bind(title: String, imageName: String) {
-        card_item_title.text = title
+    fun tryToBind() {
+        dataToBind?.let { (title , imageName) ->
+            bind(title, imageName)
+        }
+    }
 
-        Glide.with(context)
-                .load(Uri.parse(ASSET_PATH.format(imageName)))
-                .transform(CenterCrop(), RoundedCorners(cornerRadius))
-                .placeholder(R.drawable.placeholder)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(card_character_image)
+    fun bind(title: String, imageName: String) {
+        if (measuredHeight == 0 && measuredWidth == 0) {
+            dataToBind = title to imageName
+        } else {
+            card_item_title.text = title
+
+            Glide.with(context)
+                    .load(Uri.parse(ASSET_PATH.format(imageName)))
+                    .transform(CenterCrop(), RoundedCorners(cornerRadius))
+                    .placeholder(R.drawable.placeholder)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(card_character_image)
+        }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        tryToBind()
+        super.onSizeChanged(w, h, oldw, oldh)
     }
 }

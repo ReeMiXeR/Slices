@@ -19,10 +19,10 @@ class GameResultAdapter : Adapter<GameResultItem, GameResultViewHolder>() {
 
     override fun createHolder(view: View): GameResultViewHolder {
         return GameResultViewHolder(
-                view.apply {
-                    layoutParams.height = view.context.deviceHeight / 3
-                    layoutParams = layoutParams
-                }
+            view.apply {
+                layoutParams.height = view.context.deviceHeight / 3
+                layoutParams = layoutParams
+            }
         )
     }
 
@@ -48,10 +48,10 @@ class GameResultAdapter : Adapter<GameResultItem, GameResultViewHolder>() {
             holder.correctness.isActivated = item.isCorrect
 
             Glide.with(context)
-                    .load(Uri.parse(ASSET_PATH.format(this.item.character.imageName)))
-                    .transform(CenterCrop(), RoundedCorners(16.dp(context)))
-                    .placeholder(R.drawable.placeholder)
-                    .into(holder.background)
+                .load(Uri.parse(ASSET_PATH.format(this.item.character.imageName)))
+                .transform(CenterCrop(), RoundedCorners(16.dp(context)))
+                .placeholder(R.drawable.placeholder)
+                .into(holder.background)
         }
     }
 }

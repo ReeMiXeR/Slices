@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vs.game.slices.view.view.StateViewGroup xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/game_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipChildren="false"
-    android:clipToPadding="false"
-    app:state_content="@id/game_content"
-    app:state_init="loading"
-    app:state_loading="@id/game_loading"
-    app:state_stub="@id/game_stub"
-    tools:context=".view.activity.GameActivity">
+<vs.game.slices.view.view.StateViewGroup
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/game_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:state_content="@id/game_content"
+        app:state_init="content"
+        app:state_stub="@id/game_stub"
+        tools:context=".view.activity.GameActivity">
 
-    <include layout="@layout/layout_stub" />
+    <include layout="@layout/layout_stub"/>
 
-    <include layout="@layout/layout_game_content" />
-
-    <include layout="@layout/layout_loading" />
+    <include layout="@layout/layout_game_content"/>
 
 </vs.game.slices.view.view.StateViewGroup>
